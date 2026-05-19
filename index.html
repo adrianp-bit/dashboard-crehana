@@ -547,20 +547,30 @@ function setCsv(sheetIdOrUrl) {
 }
 
 function parseCsv(text) {
-  // Parser CSV simple con soporte para celdas entre comillas
-  const lines = text.trim().split('\n');
-  return lines.map(line => {
-    const cols = [];
-    let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
-      if (c === '"') { inQ = !inQ; }
-      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-      else { cur += c; }
+  // Parser CSV robusto: maneja comillas dobles escapadas y comas dentro de celdas
+  const rows = [];
+  let row = [], cur = '', inQ = false, i = 0;
+  const s = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  while (i < s.length) {
+    const c = s[i];
+    if (inQ) {
+      if (c === '"') {
+        if (s[i + 1] === '"') { cur += '"'; i += 2; continue; }
+        inQ = false;
+      } else { cur += c; }
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { row.push(cur.trim()); cur = ''; }
+      else if (c === '\n') {
+        row.push(cur.trim());
+        rows.push(row);
+        row = []; cur = ''; i++; continue;
+      } else { cur += c; }
     }
-    cols.push(cur.trim());
-    return cols;
-  });
+    i++;
+  }
+  if (cur || row.length) { row.push(cur.trim()); if (row.some(c => c !== '')) rows.push(row); }
+  return rows;
 }
 
 function parseAmount(str) {
