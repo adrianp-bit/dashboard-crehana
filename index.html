@@ -8,483 +8,183 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0f14;
-    --surface: #14171f;
-    --surface2: #1c2030;
-    --border: #252a3a;
-    --accent: #5b6af7;
-    --accent2: #f7c35b;
-    --green: #3ecf7e;
-    --orange: #f7835b;
-    --red: #f75b5b;
-    --muted: #6b7280;
-    --text: #e8eaf0;
-    --text2: #9ca3af;
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --radius: 10px;
-    --transition: 0.18s ease;
+    --bg: #0d0f14; --surface: #14171f; --surface2: #1c2030; --border: #252a3a;
+    --accent: #5b6af7; --accent2: #f7c35b; --green: #3ecf7e; --orange: #f7835b;
+    --red: #f75b5b; --muted: #6b7280; --text: #e8eaf0; --text2: #9ca3af;
+    --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    --radius: 10px; --transition: 0.18s ease;
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 14px; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 80% 10%, rgba(91,106,247,0.08) 0%, transparent 60%), radial-gradient(ellipse 40% 30% at 10% 80%, rgba(62,207,126,0.05) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+  .app { position: relative; z-index: 1; max-width: 1440px; margin: 0 auto; padding: 32px 24px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 14px;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ─── BACKGROUND TEXTURE ─── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(91,106,247,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 30% at 10% 80%, rgba(62,207,126,0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ─── LAYOUT ─── */
-  .app { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
-
-  /* ─── HEADER ─── */
-  header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 36px;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
+  /* HEADER */
+  header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 36px; flex-wrap: wrap; gap: 16px; }
   .brand { display: flex; align-items: center; gap: 14px; }
-
-  .brand-logo {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--accent), #8b5cf6);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 18px;
-    color: #fff;
-    letter-spacing: -1px;
-  }
-
-  h1 {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text);
-    line-height: 1;
-  }
-
+  .brand-logo { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 18px; color: #fff; }
+  h1 { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
   h1 span { color: var(--accent); }
-
-  .subtitle {
-    font-size: 12px;
-    color: var(--text2);
-    font-weight: 300;
-    margin-top: 3px;
-  }
-
-  /* ─── SYNC BAR ─── */
-  .sync-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px 14px;
-    font-size: 12px;
-    color: var(--text2);
-  }
-
-  .sync-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-    flex-shrink: 0;
-  }
-
+  .subtitle { font-size: 12px; color: var(--text2); font-weight: 300; margin-top: 3px; }
+  .sync-bar { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; font-size: 12px; color: var(--text2); }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; flex-shrink: 0; }
   .sync-dot.error { background: var(--red); animation: none; }
   .sync-dot.loading { background: var(--accent2); }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
   #sync-status { color: var(--text); font-weight: 500; }
-
-  .btn-sync {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text2);
-    padding: 4px 10px;
-    cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 11px;
-    transition: var(--transition);
-  }
+  .btn-sync { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text2); padding: 4px 10px; cursor: pointer; font-family: var(--font-body); font-size: 11px; transition: var(--transition); }
   .btn-sync:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* ─── KPI CARDS ─── */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  .kpi {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color var(--transition), transform var(--transition);
-  }
+  /* KPIs */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; position: relative; overflow: hidden; transition: border-color var(--transition), transform var(--transition); }
   .kpi:hover { border-color: var(--accent); transform: translateY(-2px); }
-
-  .kpi::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-    border-radius: 10px 0 0 10px;
-  }
+  .kpi::after { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 10px 0 0 10px; }
   .kpi.c-accent::after { background: var(--accent); }
   .kpi.c-green::after { background: var(--green); }
   .kpi.c-orange::after { background: var(--orange); }
   .kpi.c-yellow::after { background: var(--accent2); }
   .kpi.c-red::after { background: var(--red); }
-
-  .kpi-value {
-    font-family: var(--font-display);
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
+  .kpi.c-purple::after { background: #a78bfa; }
+  .kpi-value { font-family: var(--font-display); font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
   .kpi.c-accent .kpi-value { color: var(--accent); }
   .kpi.c-green .kpi-value { color: var(--green); }
   .kpi.c-orange .kpi-value { color: var(--orange); }
   .kpi.c-yellow .kpi-value { color: var(--accent2); }
   .kpi.c-red .kpi-value { color: var(--red); }
+  .kpi.c-purple .kpi-value { color: #a78bfa; }
+  .kpi-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; }
 
-  .kpi-label { font-size: 11px; color: var(--text2); font-weight: 400; text-transform: uppercase; letter-spacing: 0.6px; }
-
-  /* ─── FILTERS ─── */
-  .filters {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
-  .search-icon {
-    position: absolute;
-    left: 11px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-    font-size: 14px;
-    pointer-events: none;
-  }
-  input[type="search"] {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px 12px 8px 34px;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 13px;
-    outline: none;
-    transition: border-color var(--transition);
-  }
-  input[type="search"]:focus { border-color: var(--accent); }
-
-  select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px 28px 8px 12px;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 13px;
-    outline: none;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    transition: border-color var(--transition);
-  }
+  /* FILTERS */
+  .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+  .search-wrap { position: relative; }
+  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+  input[type="search"], input[type="number"], input[type="text"] { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; color: var(--text); font-family: var(--font-body); font-size: 13px; outline: none; transition: border-color var(--transition); }
+  input[type="search"] { padding-left: 34px; width: 200px; }
+  input[type="search"]:focus, input[type="number"]:focus { border-color: var(--accent); }
+  input[type="number"] { width: 110px; }
+  input::placeholder { color: var(--muted); }
+  select { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 28px 8px 12px; color: var(--text); font-family: var(--font-body); font-size: 13px; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; transition: border-color var(--transition); }
   select:focus { border-color: var(--accent); }
+  .range-wrap { display: flex; gap: 6px; align-items: center; }
+  .range-sep { color: var(--muted); font-size: 12px; }
+  .btn-clear { background: none; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); padding: 8px 12px; cursor: pointer; font-size: 12px; font-family: var(--font-body); transition: var(--transition); white-space: nowrap; align-self: flex-end; }
+  .btn-clear:hover { border-color: var(--red); color: var(--red); }
 
-  .filter-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
-
-  /* ─── TABLE ─── */
-  .table-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-
-  .table-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .table-title {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .table-count {
-    font-size: 12px;
-    color: var(--text2);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2px 10px;
-  }
-
+  /* TABLE */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .table-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .table-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+  .table-count { font-size: 12px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px; }
   table { width: 100%; border-collapse: collapse; }
-
-  thead th {
-    padding: 12px 14px;
-    text-align: left;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text2);
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    transition: color var(--transition);
-  }
+  thead th { padding: 12px 14px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text2); background: var(--surface2); border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; transition: color var(--transition); }
   thead th:hover { color: var(--accent); }
   thead th.sorted { color: var(--accent); }
-
-  tbody tr {
-    border-bottom: 1px solid rgba(37,42,58,0.6);
-    transition: background var(--transition);
-    animation: fadeIn 0.3s ease forwards;
-  }
+  tbody tr { border-bottom: 1px solid rgba(37,42,58,0.6); transition: background var(--transition); animation: fadeIn 0.25s ease forwards; }
   tbody tr:hover { background: rgba(91,106,247,0.04); }
   tbody tr:last-child { border-bottom: none; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none} }
+  td { padding: 13px 14px; vertical-align: middle; font-size: 13px; }
+  .client-name { font-weight: 600; font-family: var(--font-display); font-size: 13px; }
+  .client-type { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .sf-link { color: var(--accent); text-decoration: none; font-size: 11px; opacity: 0.7; transition: opacity var(--transition); }
+  .sf-link:hover { opacity: 1; }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  td {
-    padding: 13px 14px;
-    vertical-align: middle;
-    font-size: 13px;
-    color: var(--text);
-  }
-
-  /* ─── BADGES ─── */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 9px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
+  /* BADGES */
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
   .badge-green   { background: rgba(62,207,126,0.12); color: #3ecf7e; border: 1px solid rgba(62,207,126,0.2); }
   .badge-orange  { background: rgba(247,131,91,0.12); color: #f7835b; border: 1px solid rgba(247,131,91,0.2); }
   .badge-accent  { background: rgba(91,106,247,0.12); color: #8b9cff; border: 1px solid rgba(91,106,247,0.2); }
   .badge-yellow  { background: rgba(247,195,91,0.12); color: #f7c35b; border: 1px solid rgba(247,195,91,0.2); }
   .badge-red     { background: rgba(247,91,91,0.12);  color: #f75b5b; border: 1px solid rgba(247,91,91,0.2); }
   .badge-grey    { background: rgba(107,114,128,0.12); color: #9ca3af; border: 1px solid rgba(107,114,128,0.2); }
-
   .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .dot-green  { background: #3ecf7e; }
-  .dot-orange { background: #f7835b; }
-  .dot-accent { background: #8b9cff; }
-  .dot-yellow { background: #f7c35b; }
-  .dot-red    { background: #f75b5b; }
-  .dot-grey   { background: #9ca3af; }
+  .dot-green{background:#3ecf7e}.dot-orange{background:#f7835b}.dot-accent{background:#8b9cff}.dot-yellow{background:#f7c35b}.dot-red{background:#f75b5b}.dot-grey{background:#9ca3af}
 
-  /* ─── PROGRESS BAR ─── */
-  .progress-wrap { display: flex; align-items: center; gap: 8px; min-width: 100px; }
+  /* PROGRESS */
+  .progress-wrap { display: flex; align-items: center; gap: 8px; min-width: 90px; }
   .progress-bar { flex: 1; height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
   .progress-pct { font-size: 11px; color: var(--text2); min-width: 28px; text-align: right; }
 
-  /* ─── CLIENT NAME ─── */
-  .client-name { font-weight: 600; font-family: var(--font-display); font-size: 13px; }
-  .client-type { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  /* COST BUTTON */
+  .cost-btn { background: none; border: none; cursor: pointer; font-family: var(--font-body); font-size: 13px; color: var(--text); padding: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; transition: color var(--transition); }
+  .cost-btn:hover .cost-main { color: var(--accent); text-decoration: underline; }
+  .cost-main { font-weight: 600; }
+  .cost-hint { font-size: 10px; color: var(--text2); display: flex; align-items: center; gap: 3px; }
+  .cost-hint-icon { font-size: 9px; }
 
-  .sf-link {
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 11px;
-    opacity: 0.7;
-    transition: opacity var(--transition);
-  }
-  .sf-link:hover { opacity: 1; }
-
-  /* ─── DETAIL CELL ─── */
-  .detail-text { font-size: 12px; color: var(--text2); max-width: 240px; line-height: 1.5; }
-  .detail-line { display: flex; align-items: baseline; gap: 5px; margin-bottom: 2px; }
-
-  /* ─── EMPTY + LOADING STATES ─── */
-  .empty-state, .loading-state {
-    text-align: center;
-    padding: 64px 20px;
-    color: var(--text2);
-  }
-
-  .loading-state .spinner {
-    width: 32px; height: 32px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
+  /* EMPTY / LOADING */
+  .empty-state, .loading-state { text-align: center; padding: 64px 20px; color: var(--text2); }
+  .loading-state .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
   .empty-icon { font-size: 36px; margin-bottom: 12px; }
-  .empty-state p, .loading-state p { font-size: 13px; }
 
-  /* ─── SETUP PANEL ─── */
-  .setup-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 32px;
-    text-align: center;
-    max-width: 560px;
-    margin: 60px auto;
-  }
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; animation: fadeOverlay 0.2s ease forwards; }
+  @keyframes fadeOverlay { to{opacity:1} }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.2s ease forwards; }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1} }
+  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 24px 24px 0; gap: 12px; }
+  .modal-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
+  .modal-subtitle { font-size: 12px; color: var(--text2); margin-top: 3px; }
+  .modal-close { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text2); font-size: 16px; flex-shrink: 0; transition: var(--transition); }
+  .modal-close:hover { border-color: var(--red); color: var(--red); }
+  .modal-body { padding: 20px 24px 24px; }
+  .modal-section { margin-bottom: 20px; }
+  .modal-section:last-child { margin-bottom: 0; }
+  .modal-section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text2); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .cost-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .cost-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+  .cost-item-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .cost-item-value { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--accent2); }
+  .exec-list { display: flex; flex-direction: column; gap: 6px; }
+  .exec-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+  .exec-item.done { background: rgba(62,207,126,0.06); }
+  .exec-item.warn { background: rgba(247,195,91,0.06); }
+  .exec-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .modal-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .meta-item { background: var(--surface2); border-radius: 8px; padding: 10px 12px; }
+  .meta-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .meta-value { font-size: 13px; font-weight: 500; }
 
+  /* SETUP */
+  .setup-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px; text-align: center; max-width: 560px; margin: 60px auto; }
   .setup-panel h2 { font-family: var(--font-display); font-size: 20px; margin-bottom: 8px; }
   .setup-panel p { color: var(--text2); font-size: 13px; line-height: 1.7; margin-bottom: 24px; }
-
-  .setup-steps {
-    text-align: left;
-    background: var(--surface2);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 24px;
-  }
-
-  .setup-step {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-    align-items: flex-start;
-  }
+  .setup-steps { text-align: left; background: var(--surface2); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; }
+  .setup-step { display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-start; }
   .setup-step:last-child { margin-bottom: 0; }
-
-  .step-num {
-    width: 22px; height: 22px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
-    color: #fff;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .step-text { font-size: 13px; line-height: 1.6; color: var(--text); }
-  .step-text code {
-    background: var(--border);
-    border-radius: 4px;
-    padding: 1px 5px;
-    font-size: 11px;
-    color: var(--accent2);
-    font-family: monospace;
-  }
-
+  .step-num { width: 22px; height: 22px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 13px; line-height: 1.6; }
+  .step-text code { background: var(--border); border-radius: 4px; padding: 1px 5px; font-size: 11px; color: var(--accent2); font-family: monospace; }
   .url-input-wrap { display: flex; gap: 8px; margin-bottom: 12px; }
-  .url-input-wrap input {
-    flex: 1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 13px;
-    outline: none;
-  }
+  .url-input-wrap input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; color: var(--text); font-family: var(--font-body); font-size: 13px; outline: none; }
   .url-input-wrap input:focus { border-color: var(--accent); }
   .url-input-wrap input::placeholder { color: var(--muted); }
-
-  .btn-primary {
-    background: var(--accent);
-    border: none;
-    border-radius: var(--radius);
-    padding: 10px 20px;
-    color: #fff;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity var(--transition);
-  }
+  .btn-primary { background: var(--accent); border: none; border-radius: var(--radius); padding: 10px 20px; color: #fff; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity var(--transition); }
   .btn-primary:hover { opacity: 0.85; }
-
   .note { font-size: 11px; color: var(--text2); }
-  .note a { color: var(--accent); }
 
-  /* ─── FOOTER ─── */
-  footer {
-    margin-top: 32px;
-    text-align: center;
-    font-size: 11px;
-    color: var(--muted);
+  footer { margin-top: 32px; text-align: center; font-size: 11px; color: var(--muted); }
+
+  @media (max-width: 900px) {
+    .col-sm { display: none; }
+    .filters { gap: 8px; }
+    input[type="search"] { width: 160px; }
+    input[type="number"] { width: 90px; }
   }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 768px) {
+  @media (max-width: 600px) {
     .app { padding: 16px; }
     header { flex-direction: column; align-items: flex-start; }
-    .col-hidden-sm { display: none; }
-    td, th { padding: 10px 10px; }
+    .modal-meta { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- HEADER -->
   <header>
     <div class="brand">
       <div class="brand-logo">C</div>
@@ -499,55 +199,42 @@
       <button class="btn-sync" onclick="loadData()">↺ Sincronizar</button>
     </div>
   </header>
-
-  <!-- MAIN CONTENT (se llena dinámicamente) -->
-  <div id="main-content">
-    <!-- Setup panel o tabla, según estado -->
-  </div>
-
+  <div id="main-content"></div>
   <footer id="footer-info"></footer>
 </div>
 
+<!-- MODAL -->
+<div id="modal-overlay" style="display:none" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-subtitle" id="modal-subtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
 <script>
-// ─────────────────────────────────────────────
-// CONFIGURACIÓN
-// ─────────────────────────────────────────────
-// Guarda aquí el Sheet ID una vez que lo configures.
-// También puedes pasarlo por URL: ?sheetId=TU_ID
+// ── CONFIG ──────────────────────────────────────────────
 const CONFIG = {
   sheetId: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTHJUfy6PrpOCjwsTAyGQPCJCDivJ0CHTecS36C9A21lvG5MVky5v8b7k1TwzEzYVcR93f6Pp9ks61G/pub?gid=102460057&single=true&output=csv',
-  sheetName: 'Resumen contenidos personalizados',
-  refreshMs: 5 * 60 * 1000  // 5 minutos auto-refresh
+  refreshMs: 5 * 60 * 1000
 };
 
-// ─────────────────────────────────────────────
-// ESTADO
-// ─────────────────────────────────────────────
+// ── STATE ───────────────────────────────────────────────
 let allData = [];
-let sortCol = null;
-let sortDir = 1;
-let filterStatus = '';
-let filterResp = '';
+let sortCol = null, sortDir = 1;
+let filterStatus = '', filterResp = '';
 let searchTerm = '';
+let filterAcvMin = '', filterAcvMax = '';
+let filterCostMin = '', filterCostMax = '';
+let filterCierreFrom = '', filterCierreTo = '';
 
-// ─────────────────────────────────────────────
-// UTILIDADES
-// ─────────────────────────────────────────────
-function getSheetId() {
-  const url = new URL(window.location.href);
-  return url.searchParams.get('sheetId') || CONFIG.sheetId;
-}
-
-function setCsv(sheetIdOrUrl) {
-  // Si ya es una URL completa de publicación, úsala directamente
-  if (sheetIdOrUrl.startsWith('http')) return sheetIdOrUrl;
-  // Si es un ID clásico, construir URL gviz
-  const encoded = encodeURIComponent(CONFIG.sheetName);
-  return `https://docs.google.com/spreadsheets/d/${sheetIdOrUrl}/gviz/tq?tqx=out:csv&sheet=${encoded}`;
-}
-
+// ── CSV PARSER ──────────────────────────────────────────
 function parseCsv(text) {
-  // Parser CSV robusto: maneja comillas dobles escapadas y comas dentro de celdas
   const rows = [];
   let row = [], cur = '', inQ = false, i = 0;
   const s = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -555,16 +242,14 @@ function parseCsv(text) {
     const c = s[i];
     if (inQ) {
       if (c === '"') {
-        if (s[i + 1] === '"') { cur += '"'; i += 2; continue; }
+        if (s[i+1] === '"') { cur += '"'; i += 2; continue; }
         inQ = false;
       } else { cur += c; }
     } else {
       if (c === '"') { inQ = true; }
       else if (c === ',') { row.push(cur.trim()); cur = ''; }
       else if (c === '\n') {
-        row.push(cur.trim());
-        rows.push(row);
-        row = []; cur = ''; i++; continue;
+        row.push(cur.trim()); rows.push(row); row = []; cur = ''; i++; continue;
       } else { cur += c; }
     }
     i++;
@@ -573,9 +258,44 @@ function parseCsv(text) {
   return rows;
 }
 
+// ── UTILS ───────────────────────────────────────────────
+function getSheetId() {
+  const u = new URL(window.location.href);
+  return u.searchParams.get('sheetId') || CONFIG.sheetId;
+}
+
+function setCsv(id) {
+  if (id.startsWith('http')) return id;
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=Resumen%20contenidos%20personalizados`;
+}
+
 function parseAmount(str) {
   if (!str) return 0;
   return parseFloat(str.replace(/[\$\.]/g, '').replace(',', '.')) || 0;
+}
+
+function parseCostTotal(str) {
+  if (!str) return { total: 0, breakdown: [] };
+  // Buscar "Total: $X.XXX" o "Total: $X,XXX"
+  const totalMatch = str.match(/Total[:\s]+\$?([\d.,]+)/i);
+  const total = totalMatch ? parseAmount(totalMatch[1]) : 0;
+
+  // Parsear líneas de desglose: "Rec. Internos: $2966", "HUB: $4000", etc.
+  const breakdown = [];
+  const lines = str.split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+  for (const line of lines) {
+    // Ignorar la línea de total
+    if (/^total/i.test(line)) continue;
+    // Buscar "Etiqueta: $valor" o "Etiqueta= $valor"
+    const m = line.match(/^(.+?)[\s:=]+\$?([\d.,]+)\s*(USD|COP|PEN)?/i);
+    if (m) {
+      const label = m[1].trim();
+      const value = parseAmount(m[2]);
+      const currency = m[3] || 'USD';
+      if (value > 0 && label.length < 40) breakdown.push({ label, value, currency });
+    }
+  }
+  return { total, breakdown, raw: str };
 }
 
 function calcProgress(detalle) {
@@ -587,14 +307,52 @@ function calcProgress(detalle) {
   return Math.round((checks / total) * 100);
 }
 
+function parseExecItems(detalle) {
+  if (!detalle) return [];
+  // Separar por ✅ y ⚠️
+  const items = [];
+  const parts = detalle.split(/(✅|⚠️)/);
+  let currentIcon = null;
+  for (const p of parts) {
+    if (p === '✅') { currentIcon = 'done'; continue; }
+    if (p === '⚠️') { currentIcon = 'warn'; continue; }
+    const text = p.trim().replace(/^[-–]/,'').trim();
+    if (text && currentIcon) items.push({ icon: currentIcon, text });
+  }
+  return items;
+}
+
+function parseDateClose(str) {
+  if (!str || str === '?' || str === '-') return null;
+  // Formatos: "9/01/2025", "30/12", "07/08/26", "13/11"
+  const parts = str.split('/');
+  if (parts.length >= 2) {
+    const d = parseInt(parts[0]);
+    const m = parseInt(parts[1]);
+    const y = parts[2] ? (parseInt(parts[2]) < 100 ? 2000 + parseInt(parts[2]) : parseInt(parts[2])) : new Date().getFullYear();
+    if (!isNaN(d) && !isNaN(m)) return new Date(y, m - 1, d);
+  }
+  return null;
+}
+
+function fmtUSD(n) {
+  if (!n) return '—';
+  return '$' + n.toLocaleString('es', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 function statusBadge(status) {
   if (!status) return '<span class="badge badge-grey"><span class="dot dot-grey"></span>Sin estado</span>';
   const s = status.toLowerCase();
-  if (s.includes('completado'))     return `<span class="badge badge-green"><span class="dot dot-green"></span>${status}</span>`;
-  if (s.includes('en proceso'))     return `<span class="badge badge-accent"><span class="dot dot-accent"></span>${status}</span>`;
-  if (s.includes('no iniciado'))    return `<span class="badge badge-grey"><span class="dot dot-grey"></span>${status}</span>`;
-  if (s.includes('pendiente'))      return `<span class="badge badge-yellow"><span class="dot dot-yellow"></span>${status}</span>`;
-  if (s.includes('por confirmar'))  return `<span class="badge badge-orange"><span class="dot dot-orange"></span>${status}</span>`;
+  if (s.includes('completado'))    return `<span class="badge badge-green"><span class="dot dot-green"></span>${status}</span>`;
+  if (s.includes('en proceso'))    return `<span class="badge badge-accent"><span class="dot dot-accent"></span>${status}</span>`;
+  if (s.includes('no iniciado'))   return `<span class="badge badge-grey"><span class="dot dot-grey"></span>${status}</span>`;
+  if (s.includes('pendiente'))     return `<span class="badge badge-yellow"><span class="dot dot-yellow"></span>${status}</span>`;
+  if (s.includes('por confirmar')) return `<span class="badge badge-orange"><span class="dot dot-orange"></span>${status}</span>`;
   return `<span class="badge badge-grey"><span class="dot dot-grey"></span>${status}</span>`;
 }
 
@@ -608,38 +366,22 @@ function csatBadge(v) {
 function progressBar(pct) {
   if (pct === null) return '<span style="color:var(--muted);font-size:11px">—</span>';
   const color = pct >= 80 ? '#3ecf7e' : pct >= 40 ? '#f7c35b' : '#f7835b';
-  return `<div class="progress-wrap">
-    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div>
-    <span class="progress-pct">${pct}%</span>
-  </div>`;
+  return `<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div><span class="progress-pct">${pct}%</span></div>`;
 }
 
-function escHtml(s) {
-  if (!s) return '';
-  return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;');
-}
-
-// ─────────────────────────────────────────────
-// CARGA DE DATOS
-// ─────────────────────────────────────────────
+// ── DATA LOAD ───────────────────────────────────────────
 async function loadData() {
   const sheetId = getSheetId();
   if (!sheetId) { renderSetup(); return; }
-
   setSyncState('loading', 'Sincronizando…');
-
   try {
-    const url = setCsv(sheetId || getSheetId());
-    const resp = await fetch(url);
+    const resp = await fetch(setCsv(sheetId));
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const text = await resp.text();
     processData(text);
-    const now = new Date().toLocaleTimeString('es', {hour:'2-digit',minute:'2-digit'});
+    const now = new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
     setSyncState('ok', `Actualizado ${now}`);
-    document.getElementById('footer-info').textContent = `Fuente: Google Sheets · ${new Date().toLocaleDateString('es', {weekday:'long',day:'numeric',month:'long'})}`;
+    document.getElementById('footer-info').textContent = `Fuente: Google Sheets · ${new Date().toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' })}`;
   } catch(e) {
     setSyncState('error', 'Error al cargar — verifica que el Sheet sea público');
     if (allData.length === 0) renderError(e.message);
@@ -649,31 +391,25 @@ async function loadData() {
 function processData(csv) {
   const rows = parseCsv(csv);
   if (rows.length < 2) return;
-
-  // Fila 0 = headers, filas 1+ = datos
-  // Columnas: 0=#, 1=Tipo, 2=Cliente, 3=Salesforce, 4=ACV, 5=Responsable, 6=Fecha inicio, 7=Proyecto, 8=Recursos, 9=Costo, 10=Detalle, 11=CSAT, 12=Status, 13=Pendientes, 14=Fecha cierre
   allData = rows.slice(1)
     .filter(r => r[2] && r[2].trim() && r[0] !== 'No se concretó')
-    .map(r => ({
-      num:         r[0]  || '',
-      tipo:        r[1]  || '',
-      cliente:     r[2]  || '',
-      sfLink:      r[3]  || '',
-      acv:         r[4]  || '',
-      responsable: r[5]  || '',
-      fechaInicio: r[6]  || '',
-      proyecto:    r[7]  || '',
-      recursos:    r[8]  || '',
-      costo:       r[9]  || '',
-      detalle:     r[10] || '',
-      csat:        r[11] || '',
-      status:      r[12] || '',
-      pendientes:  r[13] || '',
-      fechaCierre: r[14] || '',
-      acvNum:      parseAmount(r[4]),
-      progress:    calcProgress(r[10])
-    }));
-
+    .map(r => {
+      const costData = parseCostTotal(r[9] || '');
+      return {
+        num: r[0] || '', tipo: r[1] || '', cliente: r[2] || '',
+        sfLink: r[3] || '', acv: r[4] || '', responsable: r[5] || '',
+        fechaInicio: r[6] || '', proyecto: r[7] || '', recursos: r[8] || '',
+        costoRaw: r[9] || '', csat: r[11] || '', status: r[12] || '',
+        pendientes: r[13] || '', fechaCierre: r[14] || '',
+        detalle: r[10] || '',
+        acvNum: parseAmount(r[4]),
+        costoTotal: costData.total,
+        costoBreakdown: costData.breakdown,
+        progress: calcProgress(r[10]),
+        execItems: parseExecItems(r[10]),
+        fechaCierreDate: parseDateClose(r[14] || '')
+      };
+    });
   renderApp();
 }
 
@@ -685,76 +421,78 @@ function setSyncState(state, msg) {
   txt.textContent = msg;
 }
 
-// ─────────────────────────────────────────────
-// RENDER PRINCIPAL
-// ─────────────────────────────────────────────
+// ── RENDER ──────────────────────────────────────────────
 function renderApp() {
-  const mc = document.getElementById('main-content');
-  mc.innerHTML = `
-    ${renderKPIs()}
-    ${renderFilters()}
-    ${renderTable()}
-  `;
+  document.getElementById('main-content').innerHTML =
+    renderKPIs() + renderFilters() + renderTable();
   attachEvents();
 }
 
 function renderKPIs() {
-  const active = allData.filter(d => !['Completado','No iniciado','Por confirmar'].includes(d.status));
-  const done   = allData.filter(d => d.status === 'Completado');
-  const pending = allData.filter(d => d.status && d.status.toLowerCase().includes('pendiente'));
-  const totalAcv = allData.reduce((s, d) => s + d.acvNum, 0);
-  const porCerrar = allData.filter(d => d.num === 'por cerrar');
+  const done    = allData.filter(d => d.status === 'Completado').length;
+  const active  = allData.filter(d => d.status && d.status.toLowerCase().includes('en proceso')).length;
+  const pend    = allData.filter(d => d.status && d.status.toLowerCase().includes('pendiente')).length;
+  const totalAcv  = allData.reduce((s, d) => s + d.acvNum, 0);
+  const totalCost = allData.reduce((s, d) => s + d.costoTotal, 0);
+  const margin = totalAcv > 0 ? Math.round(((totalAcv - totalCost) / totalAcv) * 100) : 0;
 
   return `<div class="kpi-grid">
-    <div class="kpi c-accent">
-      <div class="kpi-value">${allData.length}</div>
-      <div class="kpi-label">Clientes totales</div>
-    </div>
-    <div class="kpi c-green">
-      <div class="kpi-value">${done.length}</div>
-      <div class="kpi-label">Completados</div>
-    </div>
-    <div class="kpi c-orange">
-      <div class="kpi-value">${active.length - done.length}</div>
-      <div class="kpi-label">En proceso</div>
-    </div>
-    <div class="kpi c-yellow">
-      <div class="kpi-value">${pending.length}</div>
-      <div class="kpi-label">Pendientes</div>
-    </div>
-    <div class="kpi c-red">
-      <div class="kpi-value">${porCerrar.length}</div>
-      <div class="kpi-label">Por cerrar</div>
-    </div>
+    <div class="kpi c-accent"><div class="kpi-value">${allData.length}</div><div class="kpi-label">Clientes totales</div></div>
+    <div class="kpi c-green"><div class="kpi-value">${done}</div><div class="kpi-label">Completados</div></div>
+    <div class="kpi c-orange"><div class="kpi-value">${active}</div><div class="kpi-label">En proceso</div></div>
+    <div class="kpi c-yellow"><div class="kpi-value">${pend}</div><div class="kpi-label">Pendientes</div></div>
+    <div class="kpi c-purple"><div class="kpi-value">${fmtUSD(totalAcv)}</div><div class="kpi-label">ACV Total</div></div>
+    <div class="kpi c-red"><div class="kpi-value">${fmtUSD(totalCost)}</div><div class="kpi-label">Costo interno total</div></div>
   </div>`;
 }
 
 function renderFilters() {
   const statuses = [...new Set(allData.map(d => d.status).filter(Boolean))].sort();
-  const resps = [...new Set(allData.map(d => d.responsable).filter(Boolean))].sort();
-
-  const statusOpts = statuses.map(s =>
-    `<option value="${escHtml(s)}" ${filterStatus===s?'selected':''}>${escHtml(s)}</option>`
-  ).join('');
-
-  const respOpts = resps.map(r =>
-    `<option value="${escHtml(r)}" ${filterResp===r?'selected':''}>${escHtml(r)}</option>`
-  ).join('');
+  const resps    = [...new Set(allData.map(d => d.responsable).filter(Boolean))].sort();
+  const statusOpts = statuses.map(s => `<option value="${escHtml(s)}" ${filterStatus===s?'selected':''}>${escHtml(s)}</option>`).join('');
+  const respOpts   = resps.map(r => `<option value="${escHtml(r)}" ${filterResp===r?'selected':''}>${escHtml(r)}</option>`).join('');
 
   return `<div class="filters">
-    <div class="search-wrap">
-      <span class="search-icon">⌕</span>
-      <input type="search" id="search-input" placeholder="Buscar cliente…" value="${escHtml(searchTerm)}">
+    <div class="filter-group">
+      <span class="filter-label">Buscar</span>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="search" id="search-input" placeholder="Cliente, responsable…" value="${escHtml(searchTerm)}">
+      </div>
     </div>
-    <span class="filter-label">Filtrar por:</span>
-    <select id="filter-status">
-      <option value="">Todos los estados</option>
-      ${statusOpts}
-    </select>
-    <select id="filter-resp">
-      <option value="">Todos los responsables</option>
-      ${respOpts}
-    </select>
+    <div class="filter-group">
+      <span class="filter-label">Estado</span>
+      <select id="filter-status"><option value="">Todos</option>${statusOpts}</select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Responsable</span>
+      <select id="filter-resp"><option value="">Todos</option>${respOpts}</select>
+    </div>
+    <div class="filter-group col-sm">
+      <span class="filter-label">ACV (USD)</span>
+      <div class="range-wrap">
+        <input type="number" id="acv-min" placeholder="Min" value="${filterAcvMin}" min="0">
+        <span class="range-sep">–</span>
+        <input type="number" id="acv-max" placeholder="Max" value="${filterAcvMax}" min="0">
+      </div>
+    </div>
+    <div class="filter-group col-sm">
+      <span class="filter-label">Costo interno (USD)</span>
+      <div class="range-wrap">
+        <input type="number" id="cost-min" placeholder="Min" value="${filterCostMin}" min="0">
+        <span class="range-sep">–</span>
+        <input type="number" id="cost-max" placeholder="Max" value="${filterCostMax}" min="0">
+      </div>
+    </div>
+    <div class="filter-group col-sm">
+      <span class="filter-label">Cierre estimado</span>
+      <div class="range-wrap">
+        <input type="text" id="cierre-from" placeholder="dd/mm/aa" value="${filterCierreFrom}" style="width:95px">
+        <span class="range-sep">–</span>
+        <input type="text" id="cierre-to" placeholder="dd/mm/aa" value="${filterCierreTo}" style="width:95px">
+      </div>
+    </div>
+    <button class="btn-clear" onclick="clearFilters()">✕ Limpiar</button>
   </div>`;
 }
 
@@ -763,21 +501,34 @@ function getFiltered() {
   if (searchTerm) {
     const q = searchTerm.toLowerCase();
     data = data.filter(d =>
-      d.cliente.toLowerCase().includes(q) ||
-      d.responsable.toLowerCase().includes(q) ||
-      d.tipo.toLowerCase().includes(q) ||
-      d.proyecto.toLowerCase().includes(q)
+      d.cliente.toLowerCase().includes(q) || d.responsable.toLowerCase().includes(q) ||
+      d.tipo.toLowerCase().includes(q) || d.proyecto.toLowerCase().includes(q)
     );
   }
   if (filterStatus) data = data.filter(d => d.status === filterStatus);
   if (filterResp)   data = data.filter(d => d.responsable === filterResp);
-
+  if (filterAcvMin) data = data.filter(d => d.acvNum >= parseFloat(filterAcvMin));
+  if (filterAcvMax) data = data.filter(d => d.acvNum <= parseFloat(filterAcvMax));
+  if (filterCostMin) data = data.filter(d => d.costoTotal >= parseFloat(filterCostMin));
+  if (filterCostMax) data = data.filter(d => d.costoTotal <= parseFloat(filterCostMax));
+  if (filterCierreFrom) {
+    const from = parseDateClose(filterCierreFrom);
+    if (from) data = data.filter(d => d.fechaCierreDate && d.fechaCierreDate >= from);
+  }
+  if (filterCierreTo) {
+    const to = parseDateClose(filterCierreTo);
+    if (to) data = data.filter(d => d.fechaCierreDate && d.fechaCierreDate <= to);
+  }
   if (sortCol) {
     data.sort((a, b) => {
       let va = a[sortCol] || '', vb = b[sortCol] || '';
-      if (sortCol === 'acvNum') { va = a.acvNum; vb = b.acvNum; }
+      if (sortCol === 'acvNum' || sortCol === 'costoTotal') { va = a[sortCol]; vb = b[sortCol]; }
+      if (sortCol === 'fechaCierreDate') {
+        va = a.fechaCierreDate ? a.fechaCierreDate.getTime() : 0;
+        vb = b.fechaCierreDate ? b.fechaCierreDate.getTime() : 0;
+      }
       if (typeof va === 'number') return (va - vb) * sortDir;
-      return va.localeCompare(vb) * sortDir;
+      return String(va).localeCompare(String(vb)) * sortDir;
     });
   }
   return data;
@@ -797,19 +548,18 @@ function renderTable() {
     </div>
     <div style="overflow-x:auto">
     <table>
-      <thead>
-        <tr>
-          ${thSort('cliente','Cliente')}
-          ${thSort('tipo','Tipo')}
-          ${thSort('responsable','Responsable')}
-          ${thSort('acvNum','ACV')}
-          <th>Progreso</th>
-          <th>Pendientes</th>
-          ${thSort('status','Status')}
-          <th class="col-hidden-sm">CSAT</th>
-          ${thSort('fechaCierre','Cierre est.')}
-        </tr>
-      </thead>
+      <thead><tr>
+        ${thSort('cliente','Cliente')}
+        <th class="col-sm">Tipo</th>
+        ${thSort('responsable','Responsable')}
+        ${thSort('acvNum','ACV')}
+        ${thSort('costoTotal','Costo interno')}
+        <th>Progreso</th>
+        <th class="col-sm">Pendientes</th>
+        ${thSort('status','Status')}
+        <th class="col-sm">CSAT</th>
+        ${thSort('fechaCierreDate','Cierre est.')}
+      </tr></thead>
       <tbody id="tbody">
         ${data.length === 0 ? renderEmpty() : data.map(renderRow).join('')}
       </tbody>
@@ -818,127 +568,174 @@ function renderTable() {
   </div>`;
 }
 
-function renderRow(d) {
+function renderRow(d, i) {
   const sf = d.sfLink && d.sfLink.startsWith('http')
-    ? `<br><a class="sf-link" href="${d.sfLink}" target="_blank" rel="noopener">↗ Salesforce</a>` : '';
+    ? `<br><a class="sf-link" href="${escHtml(d.sfLink)}" target="_blank" rel="noopener">↗ Salesforce</a>` : '';
 
   const pendText = d.pendientes && d.pendientes !== '-'
-    ? `<div class="detail-text">${escHtml(d.pendientes)}</div>` : '<span style="color:var(--muted)">—</span>';
-
-  const avc = d.acv ? `<span style="font-weight:600">${escHtml(d.acv)}</span>` : '<span style="color:var(--muted)">—</span>';
+    ? `<span style="font-size:12px;color:var(--text2)">${escHtml(d.pendientes)}</span>`
+    : '<span style="color:var(--muted)">—</span>';
 
   const fecha = d.fechaCierre && d.fechaCierre !== '?'
     ? `<span style="font-size:12px">${escHtml(d.fechaCierre)}</span>`
     : '<span style="color:var(--muted)">—</span>';
 
+  // Cost button
+  const costDisplay = d.costoTotal > 0
+    ? `<button class="cost-btn" onclick="openModal(${i})" title="Ver desglose">
+        <span class="cost-main">${fmtUSD(d.costoTotal)}</span>
+        <span class="cost-hint"><span class="cost-hint-icon">🔍</span> ver detalle</span>
+       </button>`
+    : '<span style="color:var(--muted)">—</span>';
+
+  const acvDisplay = d.acv ? `<span style="font-weight:600">${escHtml(d.acv)}</span>` : '<span style="color:var(--muted)">—</span>';
+
   return `<tr>
     <td>
-      <div class="client-name">${escHtml(d.cliente)}</div>
+      <div class="client-name" style="cursor:pointer;color:var(--text)" onclick="openModal(${i})">${escHtml(d.cliente)}</div>
       <div class="client-type">${escHtml(d.tipo)}</div>
       ${sf}
     </td>
-    <td class="col-hidden-sm"><span style="font-size:12px;color:var(--text2)">${escHtml(d.tipo) || '—'}</span></td>
+    <td class="col-sm"><span style="font-size:12px;color:var(--text2)">${escHtml(d.tipo)||'—'}</span></td>
     <td><span style="font-size:12px">${escHtml(d.responsable)}</span></td>
-    <td>${avc}</td>
+    <td>${acvDisplay}</td>
+    <td>${costDisplay}</td>
     <td>${progressBar(d.progress)}</td>
-    <td>${pendText}</td>
+    <td class="col-sm">${pendText}</td>
     <td>${statusBadge(d.status)}</td>
-    <td class="col-hidden-sm">${csatBadge(d.csat)}</td>
+    <td class="col-sm">${csatBadge(d.csat)}</td>
     <td>${fecha}</td>
   </tr>`;
 }
 
 function renderEmpty() {
-  return `<tr><td colspan="9">
-    <div class="empty-state">
-      <div class="empty-icon">🔍</div>
-      <p>Sin resultados para los filtros aplicados.</p>
-    </div>
-  </td></tr>`;
+  return `<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">🔍</div><p>Sin resultados para los filtros aplicados.</p></div></td></tr>`;
 }
 
 function renderError(msg) {
   document.getElementById('main-content').innerHTML = `
-    <div class="table-wrap">
-      <div class="empty-state">
-        <div class="empty-icon">⚠️</div>
-        <p>No se pudo cargar el Google Sheet.<br><small style="color:var(--muted)">${escHtml(msg)}</small></p>
-        <br>
-        <button class="btn-primary" onclick="renderSetup()">Configurar Sheet ID</button>
+    <div class="table-wrap"><div class="empty-state">
+      <div class="empty-icon">⚠️</div>
+      <p>No se pudo cargar el Google Sheet.<br><small style="color:var(--muted)">${escHtml(msg)}</small></p>
+      <br><button class="btn-primary" onclick="renderSetup()">Configurar Sheet</button>
+    </div></div>`;
+}
+
+// ── MODAL ───────────────────────────────────────────────
+let filteredCache = [];
+
+function openModal(idx) {
+  filteredCache = getFiltered();
+  const d = filteredCache[idx];
+  if (!d) return;
+
+  document.getElementById('modal-title').textContent = d.cliente;
+  document.getElementById('modal-subtitle').textContent = `${d.tipo || ''} · ${d.responsable || ''}`;
+
+  let body = '';
+
+  // Meta info
+  body += `<div class="modal-section">
+    <div class="modal-section-title">Información general</div>
+    <div class="modal-meta">
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">${statusBadge(d.status)}</div></div>
+      <div class="meta-item"><div class="meta-label">ACV</div><div class="meta-value" style="color:var(--accent2)">${escHtml(d.acv)||'—'}</div></div>
+      <div class="meta-item"><div class="meta-label">Fecha inicio</div><div class="meta-value">${escHtml(d.fechaInicio)||'—'}</div></div>
+      <div class="meta-item"><div class="meta-label">Cierre estimado</div><div class="meta-value">${escHtml(d.fechaCierre)||'—'}</div></div>
+      ${d.csat ? `<div class="meta-item"><div class="meta-label">CSAT</div><div class="meta-value">${csatBadge(d.csat)}</div></div>` : ''}
+      ${d.pendientes && d.pendientes !== '-' ? `<div class="meta-item" style="grid-column:1/-1"><div class="meta-label">Pendientes</div><div class="meta-value" style="font-size:12px;color:var(--text2)">${escHtml(d.pendientes)}</div></div>` : ''}
+    </div>
+  </div>`;
+
+  // Proyecto
+  if (d.proyecto) {
+    body += `<div class="modal-section">
+      <div class="modal-section-title">Alcance del proyecto</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">${escHtml(d.proyecto)}</div>
+    </div>`;
+  }
+
+  // Costos
+  if (d.costoTotal > 0 || d.costoBreakdown.length > 0) {
+    const breakdownHtml = d.costoBreakdown.length > 0
+      ? d.costoBreakdown.map(b => `
+          <div class="cost-item">
+            <div class="cost-item-label">${escHtml(b.label)}</div>
+            <div class="cost-item-value">${fmtUSD(b.value)}</div>
+          </div>`).join('')
+      : `<div class="cost-item" style="grid-column:1/-1">
+          <div class="cost-item-label">Detalle</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px">${escHtml(d.costoRaw)}</div>
+         </div>`;
+
+    body += `<div class="modal-section">
+      <div class="modal-section-title">Costos internos · Total: <span style="color:var(--accent2)">${fmtUSD(d.costoTotal)}</span></div>
+      <div class="cost-breakdown">
+        ${breakdownHtml}
       </div>
     </div>`;
+  }
+
+  // Ejecución
+  if (d.execItems.length > 0) {
+    const execHtml = d.execItems.map(item =>
+      `<div class="exec-item ${item.icon}">
+        <span class="exec-icon">${item.icon === 'done' ? '✅' : '⚠️'}</span>
+        <span>${escHtml(item.text)}</span>
+       </div>`
+    ).join('');
+    body += `<div class="modal-section">
+      <div class="modal-section-title">Detalle de ejecución · ${progressBar(d.progress)}</div>
+      <div class="exec-list">${execHtml}</div>
+    </div>`;
+  }
+
+  document.getElementById('modal-body').innerHTML = body;
+  const overlay = document.getElementById('modal-overlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 
-// ─────────────────────────────────────────────
-// SETUP PANEL (primera vez)
-// ─────────────────────────────────────────────
-function renderSetup() {
-  setSyncState('error', 'Sin configurar');
-  document.getElementById('main-content').innerHTML = `
-  <div class="setup-panel">
-    <h2>Conectar Google Sheets</h2>
-    <p>Este dashboard se sincroniza directamente con tu Google Sheets. Solo necesitas publicarlo y pegar el ID.</p>
-
-    <div class="setup-steps">
-      <div class="setup-step">
-        <div class="step-num">1</div>
-        <div class="step-text">En tu Google Sheets: <strong>Archivo → Compartir → Publicar en la web</strong>. Selecciona la hoja <code>Resumen contenidos personalizados</code> como CSV y haz clic en <strong>Publicar</strong>.</div>
-      </div>
-      <div class="setup-step">
-        <div class="step-num">2</div>
-        <div class="step-text">Copia el <strong>ID del documento</strong> de la URL. Es la parte entre <code>/d/</code> y <code>/edit</code>.<br>
-        Ejemplo: <code>1KcBnbizhpPkVNQ9Rd…p_8</code></div>
-      </div>
-      <div class="setup-step">
-        <div class="step-num">3</div>
-        <div class="step-text">Pega el ID abajo y haz clic en <strong>Conectar</strong>. Se guardará en tu navegador.</div>
-      </div>
-    </div>
-
-    <div class="url-input-wrap">
-      <input type="text" id="sheet-id-input" placeholder="Pega aquí la URL completa de publicación…">
-      <button class="btn-primary" onclick="saveSheetId()">Conectar</button>
-    </div>
-    <p class="note">Pega la URL completa que aparece en "Publicar en la web" (formato: <code>https://docs.google.com/spreadsheets/d/e/…/pub?…&output=csv</code>).</p>
-  </div>`;
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
 }
 
-function saveSheetId() {
-  const id = document.getElementById('sheet-id-input').value.trim();
-  if (!id) return;
-  // Guardar en localStorage para reusar
-  try { localStorage.setItem('crehana_sheet_id', id); } catch(e){}
-  CONFIG.sheetId = id;
-  loadData();
+function closeModalDirect() {
+  document.getElementById('modal-overlay').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
-// ─────────────────────────────────────────────
-// EVENTOS
-// ─────────────────────────────────────────────
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+// ── FILTERS LOGIC ────────────────────────────────────────
+function clearFilters() {
+  searchTerm = ''; filterStatus = ''; filterResp = '';
+  filterAcvMin = ''; filterAcvMax = '';
+  filterCostMin = ''; filterCostMax = '';
+  filterCierreFrom = ''; filterCierreTo = '';
+  renderApp();
+}
+
 function attachEvents() {
-  const search = document.getElementById('search-input');
+  const bind = (id, key) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', e => { window[key] = e.target.value; updateTable(); });
+  };
+  bind('search-input', 'searchTerm');
+  bind('acv-min', 'filterAcvMin'); bind('acv-max', 'filterAcvMax');
+  bind('cost-min', 'filterCostMin'); bind('cost-max', 'filterCostMax');
+  bind('cierre-from', 'filterCierreFrom'); bind('cierre-to', 'filterCierreTo');
+
   const selStatus = document.getElementById('filter-status');
-  const selResp = document.getElementById('filter-resp');
+  const selResp   = document.getElementById('filter-resp');
+  if (selStatus) selStatus.addEventListener('change', e => { filterStatus = e.target.value; updateTable(); });
+  if (selResp)   selResp.addEventListener('change',   e => { filterResp   = e.target.value; updateTable(); });
 
-  if (search) search.addEventListener('input', e => {
-    searchTerm = e.target.value;
-    updateTable();
-  });
-  if (selStatus) selStatus.addEventListener('change', e => {
-    filterStatus = e.target.value;
-    updateTable();
-  });
-  if (selResp) selResp.addEventListener('change', e => {
-    filterResp = e.target.value;
-    updateTable();
-  });
-
-  // Sort headers
   document.querySelectorAll('th[data-sort]').forEach(th => {
     th.addEventListener('click', () => {
       const col = th.dataset.sort;
-      if (sortCol === col) sortDir *= -1;
-      else { sortCol = col; sortDir = 1; }
+      if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
       updateTable();
     });
   });
@@ -946,54 +743,56 @@ function attachEvents() {
 
 function updateTable() {
   const data = getFiltered();
+  filteredCache = data;
   const tbody = document.getElementById('tbody');
-  if (tbody) {
-    tbody.innerHTML = data.length === 0 ? renderEmpty() : data.map(renderRow).join('');
-  }
-  // Update KPIs
-  const kpiWrap = document.querySelector('.kpi-grid');
-  if (kpiWrap) kpiWrap.outerHTML = renderKPIs(); // no recalc needed since allData unchanged
-
-  // Update count
+  if (tbody) tbody.innerHTML = data.length === 0 ? renderEmpty() : data.map(renderRow).join('');
   const countEl = document.querySelector('.table-count');
   if (countEl) countEl.textContent = `${data.length} resultado${data.length !== 1 ? 's' : ''}`;
-
-  // Update sort headers
+  // Re-attach sort
   document.querySelectorAll('th[data-sort]').forEach(th => {
     const col = th.dataset.sort;
     th.className = sortCol === col ? 'sorted' : '';
     const label = th.textContent.replace(/[↑↓ ]+$/, '').trim();
-    const arrow = sortCol === col ? (sortDir === 1 ? ' ↑' : ' ↓') : '';
-    th.textContent = label + arrow;
-  });
-
-  // Re-attach sort events
-  document.querySelectorAll('th[data-sort]').forEach(th => {
+    th.textContent = label + (sortCol === col ? (sortDir === 1 ? ' ↑' : ' ↓') : '');
     th.addEventListener('click', () => {
-      const col = th.dataset.sort;
-      if (sortCol === col) sortDir *= -1;
-      else { sortCol = col; sortDir = 1; }
+      if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
       updateTable();
     });
   });
 }
 
-// ─────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────
-(function init() {
-  // Intentar recuperar el Sheet ID guardado
-  try {
-    const saved = localStorage.getItem('crehana_sheet_id');
-    if (saved) CONFIG.sheetId = saved;
-  } catch(e){}
+// ── SETUP ────────────────────────────────────────────────
+function renderSetup() {
+  setSyncState('error', 'Sin configurar');
+  document.getElementById('main-content').innerHTML = `
+  <div class="setup-panel">
+    <h2>Conectar Google Sheets</h2>
+    <p>Pega la URL que aparece en "Publicar en la web" (formato CSV) para conectar el dashboard.</p>
+    <div class="setup-steps">
+      <div class="setup-step"><div class="step-num">1</div><div class="step-text"><strong>Archivo → Compartir → Publicar en la web</strong>. Selecciona la hoja y formato <code>CSV</code>. Clic en Publicar.</div></div>
+      <div class="setup-step"><div class="step-num">2</div><div class="step-text">Copia la URL completa que aparece y pégala abajo.</div></div>
+    </div>
+    <div class="url-input-wrap">
+      <input type="text" id="sheet-id-input" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?…&output=csv">
+      <button class="btn-primary" onclick="saveSheetId()">Conectar</button>
+    </div>
+    <p class="note">Los datos se actualizan automáticamente cada 5 minutos.</p>
+  </div>`;
+}
 
-  // También aceptar el ID hardcodeado por conveniencia
-  // (ya configurado en CONFIG.sheetId arriba)
-
+function saveSheetId() {
+  const id = document.getElementById('sheet-id-input').value.trim();
+  if (!id) return;
+  try { localStorage.setItem('crehana_sheet_id', id); } catch(e){}
+  CONFIG.sheetId = id;
   loadData();
+}
 
-  // Auto-refresh
+// ── INIT ─────────────────────────────────────────────────
+(function init() {
+  // localStorage desactivado: la URL está fija en CONFIG.sheetId arriba
+  // try { const s = localStorage.getItem('crehana_sheet_id'); if (s) CONFIG.sheetId = s; } catch(e){}
+  loadData();
   if (CONFIG.refreshMs > 0) setInterval(loadData, CONFIG.refreshMs);
 })();
 </script>
