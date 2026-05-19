@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Contenidos Personalizados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #14171f;
+    --surface2: #1c2030;
+    --border: #252a3a;
+    --accent: #5b6af7;
+    --accent2: #f7c35b;
+    --green: #3ecf7e;
+    --orange: #f7835b;
+    --red: #f75b5b;
+    --muted: #6b7280;
+    --text: #e8eaf0;
+    --text2: #9ca3af;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 10px;
+    --transition: 0.18s ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── BACKGROUND TEXTURE ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(91,106,247,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 10% 80%, rgba(62,207,126,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LAYOUT ─── */
+  .app { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+
+  /* ─── HEADER ─── */
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+
+  .brand-logo {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--text2);
+    font-weight: 300;
+    margin-top: 3px;
+  }
+
+  /* ─── SYNC BAR ─── */
+  .sync-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .sync-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+  }
+
+  .sync-dot.error { background: var(--red); animation: none; }
+  .sync-dot.loading { background: var(--accent2); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  #sync-status { color: var(--text); font-weight: 500; }
+
+  .btn-sync {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text2);
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 11px;
+    transition: var(--transition);
+  }
+  .btn-sync:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── KPI CARDS ─── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--transition), transform var(--transition);
+  }
+  .kpi:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .kpi::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    border-radius: 10px 0 0 10px;
+  }
+  .kpi.c-accent::after { background: var(--accent); }
+  .kpi.c-green::after { background: var(--green); }
+  .kpi.c-orange::after { background: var(--orange); }
+  .kpi.c-yellow::after { background: var(--accent2); }
+  .kpi.c-red::after { background: var(--red); }
+
+  .kpi-value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .kpi.c-accent .kpi-value { color: var(--accent); }
+  .kpi.c-green .kpi-value { color: var(--green); }
+  .kpi.c-orange .kpi-value { color: var(--orange); }
+  .kpi.c-yellow .kpi-value { color: var(--accent2); }
+  .kpi.c-red .kpi-value { color: var(--red); }
+
+  .kpi-label { font-size: 11px; color: var(--text2); font-weight: 400; text-transform: uppercase; letter-spacing: 0.6px; }
+
+  /* ─── FILTERS ─── */
+  .filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
+  .search-icon {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  input[type="search"] {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px 8px 34px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    outline: none;
+    transition: border-color var(--transition);
+  }
+  input[type="search"]:focus { border-color: var(--accent); }
+
+  select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 28px 8px 12px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color var(--transition);
+  }
+  select:focus { border-color: var(--accent); }
+
+  .filter-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ─── TABLE ─── */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .table-count {
+    font-size: 12px;
+    color: var(--text2);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 10px;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text2);
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--transition);
+  }
+  thead th:hover { color: var(--accent); }
+  thead th.sorted { color: var(--accent); }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(37,42,58,0.6);
+    transition: background var(--transition);
+    animation: fadeIn 0.3s ease forwards;
+  }
+  tbody tr:hover { background: rgba(91,106,247,0.04); }
+  tbody tr:last-child { border-bottom: none; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  td {
+    padding: 13px 14px;
+    vertical-align: middle;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* ─── BADGES ─── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .badge-green   { background: rgba(62,207,126,0.12); color: #3ecf7e; border: 1px solid rgba(62,207,126,0.2); }
+  .badge-orange  { background: rgba(247,131,91,0.12); color: #f7835b; border: 1px solid rgba(247,131,91,0.2); }
+  .badge-accent  { background: rgba(91,106,247,0.12); color: #8b9cff; border: 1px solid rgba(91,106,247,0.2); }
+  .badge-yellow  { background: rgba(247,195,91,0.12); color: #f7c35b; border: 1px solid rgba(247,195,91,0.2); }
+  .badge-red     { background: rgba(247,91,91,0.12);  color: #f75b5b; border: 1px solid rgba(247,91,91,0.2); }
+  .badge-grey    { background: rgba(107,114,128,0.12); color: #9ca3af; border: 1px solid rgba(107,114,128,0.2); }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green  { background: #3ecf7e; }
+  .dot-orange { background: #f7835b; }
+  .dot-accent { background: #8b9cff; }
+  .dot-yellow { background: #f7c35b; }
+  .dot-red    { background: #f75b5b; }
+  .dot-grey   { background: #9ca3af; }
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-wrap { display: flex; align-items: center; gap: 8px; min-width: 100px; }
+  .progress-bar { flex: 1; height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+  .progress-pct { font-size: 11px; color: var(--text2); min-width: 28px; text-align: right; }
+
+  /* ─── CLIENT NAME ─── */
+  .client-name { font-weight: 600; font-family: var(--font-display); font-size: 13px; }
+  .client-type { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  .sf-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 11px;
+    opacity: 0.7;
+    transition: opacity var(--transition);
+  }
+  .sf-link:hover { opacity: 1; }
+
+  /* ─── DETAIL CELL ─── */
+  .detail-text { font-size: 12px; color: var(--text2); max-width: 240px; line-height: 1.5; }
+  .detail-line { display: flex; align-items: baseline; gap: 5px; margin-bottom: 2px; }
+
+  /* ─── EMPTY + LOADING STATES ─── */
+  .empty-state, .loading-state {
+    text-align: center;
+    padding: 64px 20px;
+    color: var(--text2);
+  }
+
+  .loading-state .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p, .loading-state p { font-size: 13px; }
+
+  /* ─── SETUP PANEL ─── */
+  .setup-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px;
+    text-align: center;
+    max-width: 560px;
+    margin: 60px auto;
+  }
+
+  .setup-panel h2 { font-family: var(--font-display); font-size: 20px; margin-bottom: 8px; }
+  .setup-panel p { color: var(--text2); font-size: 13px; line-height: 1.7; margin-bottom: 24px; }
+
+  .setup-steps {
+    text-align: left;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .setup-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .setup-step:last-child { margin-bottom: 0; }
+
+  .step-num {
+    width: 22px; height: 22px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text { font-size: 13px; line-height: 1.6; color: var(--text); }
+  .step-text code {
+    background: var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    color: var(--accent2);
+    font-family: monospace;
+  }
+
+  .url-input-wrap { display: flex; gap: 8px; margin-bottom: 12px; }
+  .url-input-wrap input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    outline: none;
+  }
+  .url-input-wrap input:focus { border-color: var(--accent); }
+  .url-input-wrap input::placeholder { color: var(--muted); }
+
+  .btn-primary {
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius);
+    padding: 10px 20px;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity var(--transition);
+  }
+  .btn-primary:hover { opacity: 0.85; }
+
+  .note { font-size: 11px; color: var(--text2); }
+  .note a { color: var(--accent); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .app { padding: 16px; }
+    header { flex-direction: column; align-items: flex-start; }
+    .col-hidden-sm { display: none; }
+    td, th { padding: 10px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">C</div>
+      <div>
+        <h1>Contenidos <span>Personalizados</span></h1>
+        <div class="subtitle">Dashboard de clientes activos · Education</div>
+      </div>
+    </div>
+    <div class="sync-bar">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-status">Cargando…</span>
+      <button class="btn-sync" onclick="loadData()">↺ Sincronizar</button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT (se llena dinámicamente) -->
+  <div id="main-content">
+    <!-- Setup panel o tabla, según estado -->
+  </div>
+
+  <footer id="footer-info"></footer>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONFIGURACIÓN
+// ─────────────────────────────────────────────
+// Guarda aquí el Sheet ID una vez que lo configures.
+// También puedes pasarlo por URL: ?sheetId=TU_ID
+const CONFIG = {
+  sheetId: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTHJUfy6PrpOCjwsTAyGQPCJCDivJ0CHTecS36C9A21lvG5MVky5v8b7k1TwzEzYVcR93f6Pp9ks61G/pub?gid=102460057&single=true&output=csv',
+  sheetName: 'Resumen contenidos personalizados',
+  refreshMs: 5 * 60 * 1000  // 5 minutos auto-refresh
+};
+
+// ─────────────────────────────────────────────
+// ESTADO
+// ─────────────────────────────────────────────
+let allData = [];
+let sortCol = null;
+let sortDir = 1;
+let filterStatus = '';
+let filterResp = '';
+let searchTerm = '';
+
+// ─────────────────────────────────────────────
+// UTILIDADES
+// ─────────────────────────────────────────────
+function getSheetId() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get('sheetId') || CONFIG.sheetId;
+}
+
+function setCsv(sheetIdOrUrl) {
+  // Si ya es una URL completa de publicación, úsala directamente
+  if (sheetIdOrUrl.startsWith('http')) return sheetIdOrUrl;
+  // Si es un ID clásico, construir URL gviz
+  const encoded = encodeURIComponent(CONFIG.sheetName);
+  return `https://docs.google.com/spreadsheets/d/${sheetIdOrUrl}/gviz/tq?tqx=out:csv&sheet=${encoded}`;
+}
+
+function parseCsv(text) {
+  // Parser CSV simple con soporte para celdas entre comillas
+  const lines = text.trim().split('\n');
+  return lines.map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+function parseAmount(str) {
+  if (!str) return 0;
+  return parseFloat(str.replace(/[\$\.]/g, '').replace(',', '.')) || 0;
+}
+
+function calcProgress(detalle) {
+  if (!detalle) return null;
+  const checks = (detalle.match(/✅/g) || []).length;
+  const warns  = (detalle.match(/⚠️/g) || []).length;
+  const total  = checks + warns;
+  if (total === 0) return null;
+  return Math.round((checks / total) * 100);
+}
+
+function statusBadge(status) {
+  if (!status) return '<span class="badge badge-grey"><span class="dot dot-grey"></span>Sin estado</span>';
+  const s = status.toLowerCase();
+  if (s.includes('completado'))     return `<span class="badge badge-green"><span class="dot dot-green"></span>${status}</span>`;
+  if (s.includes('en proceso'))     return `<span class="badge badge-accent"><span class="dot dot-accent"></span>${status}</span>`;
+  if (s.includes('no iniciado'))    return `<span class="badge badge-grey"><span class="dot dot-grey"></span>${status}</span>`;
+  if (s.includes('pendiente'))      return `<span class="badge badge-yellow"><span class="dot dot-yellow"></span>${status}</span>`;
+  if (s.includes('por confirmar'))  return `<span class="badge badge-orange"><span class="dot dot-orange"></span>${status}</span>`;
+  return `<span class="badge badge-grey"><span class="dot dot-grey"></span>${status}</span>`;
+}
+
+function csatBadge(v) {
+  if (!v || v === '-' || v === '') return '';
+  const n = parseFloat(v);
+  const cls = n >= 4.5 ? 'green' : n >= 3.5 ? 'yellow' : 'red';
+  return `<span class="badge badge-${cls}">★ ${v}</span>`;
+}
+
+function progressBar(pct) {
+  if (pct === null) return '<span style="color:var(--muted);font-size:11px">—</span>';
+  const color = pct >= 80 ? '#3ecf7e' : pct >= 40 ? '#f7c35b' : '#f7835b';
+  return `<div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div>
+    <span class="progress-pct">${pct}%</span>
+  </div>`;
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+// ─────────────────────────────────────────────
+// CARGA DE DATOS
+// ─────────────────────────────────────────────
+async function loadData() {
+  const sheetId = getSheetId();
+  if (!sheetId) { renderSetup(); return; }
+
+  setSyncState('loading', 'Sincronizando…');
+
+  try {
+    const url = setCsv(sheetId || getSheetId());
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const text = await resp.text();
+    processData(text);
+    const now = new Date().toLocaleTimeString('es', {hour:'2-digit',minute:'2-digit'});
+    setSyncState('ok', `Actualizado ${now}`);
+    document.getElementById('footer-info').textContent = `Fuente: Google Sheets · ${new Date().toLocaleDateString('es', {weekday:'long',day:'numeric',month:'long'})}`;
+  } catch(e) {
+    setSyncState('error', 'Error al cargar — verifica que el Sheet sea público');
+    if (allData.length === 0) renderError(e.message);
+  }
+}
+
+function processData(csv) {
+  const rows = parseCsv(csv);
+  if (rows.length < 2) return;
+
+  // Fila 0 = headers, filas 1+ = datos
+  // Columnas: 0=#, 1=Tipo, 2=Cliente, 3=Salesforce, 4=ACV, 5=Responsable, 6=Fecha inicio, 7=Proyecto, 8=Recursos, 9=Costo, 10=Detalle, 11=CSAT, 12=Status, 13=Pendientes, 14=Fecha cierre
+  allData = rows.slice(1)
+    .filter(r => r[2] && r[2].trim() && r[0] !== 'No se concretó')
+    .map(r => ({
+      num:         r[0]  || '',
+      tipo:        r[1]  || '',
+      cliente:     r[2]  || '',
+      sfLink:      r[3]  || '',
+      acv:         r[4]  || '',
+      responsable: r[5]  || '',
+      fechaInicio: r[6]  || '',
+      proyecto:    r[7]  || '',
+      recursos:    r[8]  || '',
+      costo:       r[9]  || '',
+      detalle:     r[10] || '',
+      csat:        r[11] || '',
+      status:      r[12] || '',
+      pendientes:  r[13] || '',
+      fechaCierre: r[14] || '',
+      acvNum:      parseAmount(r[4]),
+      progress:    calcProgress(r[10])
+    }));
+
+  renderApp();
+}
+
+function setSyncState(state, msg) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-status');
+  if (!dot || !txt) return;
+  dot.className = 'sync-dot' + (state === 'error' ? ' error' : state === 'loading' ? ' loading' : '');
+  txt.textContent = msg;
+}
+
+// ─────────────────────────────────────────────
+// RENDER PRINCIPAL
+// ─────────────────────────────────────────────
+function renderApp() {
+  const mc = document.getElementById('main-content');
+  mc.innerHTML = `
+    ${renderKPIs()}
+    ${renderFilters()}
+    ${renderTable()}
+  `;
+  attachEvents();
+}
+
+function renderKPIs() {
+  const active = allData.filter(d => !['Completado','No iniciado','Por confirmar'].includes(d.status));
+  const done   = allData.filter(d => d.status === 'Completado');
+  const pending = allData.filter(d => d.status && d.status.toLowerCase().includes('pendiente'));
+  const totalAcv = allData.reduce((s, d) => s + d.acvNum, 0);
+  const porCerrar = allData.filter(d => d.num === 'por cerrar');
+
+  return `<div class="kpi-grid">
+    <div class="kpi c-accent">
+      <div class="kpi-value">${allData.length}</div>
+      <div class="kpi-label">Clientes totales</div>
+    </div>
+    <div class="kpi c-green">
+      <div class="kpi-value">${done.length}</div>
+      <div class="kpi-label">Completados</div>
+    </div>
+    <div class="kpi c-orange">
+      <div class="kpi-value">${active.length - done.length}</div>
+      <div class="kpi-label">En proceso</div>
+    </div>
+    <div class="kpi c-yellow">
+      <div class="kpi-value">${pending.length}</div>
+      <div class="kpi-label">Pendientes</div>
+    </div>
+    <div class="kpi c-red">
+      <div class="kpi-value">${porCerrar.length}</div>
+      <div class="kpi-label">Por cerrar</div>
+    </div>
+  </div>`;
+}
+
+function renderFilters() {
+  const statuses = [...new Set(allData.map(d => d.status).filter(Boolean))].sort();
+  const resps = [...new Set(allData.map(d => d.responsable).filter(Boolean))].sort();
+
+  const statusOpts = statuses.map(s =>
+    `<option value="${escHtml(s)}" ${filterStatus===s?'selected':''}>${escHtml(s)}</option>`
+  ).join('');
+
+  const respOpts = resps.map(r =>
+    `<option value="${escHtml(r)}" ${filterResp===r?'selected':''}>${escHtml(r)}</option>`
+  ).join('');
+
+  return `<div class="filters">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="search" id="search-input" placeholder="Buscar cliente…" value="${escHtml(searchTerm)}">
+    </div>
+    <span class="filter-label">Filtrar por:</span>
+    <select id="filter-status">
+      <option value="">Todos los estados</option>
+      ${statusOpts}
+    </select>
+    <select id="filter-resp">
+      <option value="">Todos los responsables</option>
+      ${respOpts}
+    </select>
+  </div>`;
+}
+
+function getFiltered() {
+  let data = [...allData];
+  if (searchTerm) {
+    const q = searchTerm.toLowerCase();
+    data = data.filter(d =>
+      d.cliente.toLowerCase().includes(q) ||
+      d.responsable.toLowerCase().includes(q) ||
+      d.tipo.toLowerCase().includes(q) ||
+      d.proyecto.toLowerCase().includes(q)
+    );
+  }
+  if (filterStatus) data = data.filter(d => d.status === filterStatus);
+  if (filterResp)   data = data.filter(d => d.responsable === filterResp);
+
+  if (sortCol) {
+    data.sort((a, b) => {
+      let va = a[sortCol] || '', vb = b[sortCol] || '';
+      if (sortCol === 'acvNum') { va = a.acvNum; vb = b.acvNum; }
+      if (typeof va === 'number') return (va - vb) * sortDir;
+      return va.localeCompare(vb) * sortDir;
+    });
+  }
+  return data;
+}
+
+function thSort(col, label) {
+  const arrow = sortCol === col ? (sortDir === 1 ? ' ↑' : ' ↓') : '';
+  return `<th class="${sortCol===col?'sorted':''}" data-sort="${col}">${label}${arrow}</th>`;
+}
+
+function renderTable() {
+  const data = getFiltered();
+  return `<div class="table-wrap">
+    <div class="table-header">
+      <span class="table-title">Clientes activos</span>
+      <span class="table-count">${data.length} resultado${data.length !== 1 ? 's' : ''}</span>
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          ${thSort('cliente','Cliente')}
+          ${thSort('tipo','Tipo')}
+          ${thSort('responsable','Responsable')}
+          ${thSort('acvNum','ACV')}
+          <th>Progreso</th>
+          <th>Pendientes</th>
+          ${thSort('status','Status')}
+          <th class="col-hidden-sm">CSAT</th>
+          ${thSort('fechaCierre','Cierre est.')}
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        ${data.length === 0 ? renderEmpty() : data.map(renderRow).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>`;
+}
+
+function renderRow(d) {
+  const sf = d.sfLink && d.sfLink.startsWith('http')
+    ? `<br><a class="sf-link" href="${d.sfLink}" target="_blank" rel="noopener">↗ Salesforce</a>` : '';
+
+  const pendText = d.pendientes && d.pendientes !== '-'
+    ? `<div class="detail-text">${escHtml(d.pendientes)}</div>` : '<span style="color:var(--muted)">—</span>';
+
+  const avc = d.acv ? `<span style="font-weight:600">${escHtml(d.acv)}</span>` : '<span style="color:var(--muted)">—</span>';
+
+  const fecha = d.fechaCierre && d.fechaCierre !== '?'
+    ? `<span style="font-size:12px">${escHtml(d.fechaCierre)}</span>`
+    : '<span style="color:var(--muted)">—</span>';
+
+  return `<tr>
+    <td>
+      <div class="client-name">${escHtml(d.cliente)}</div>
+      <div class="client-type">${escHtml(d.tipo)}</div>
+      ${sf}
+    </td>
+    <td class="col-hidden-sm"><span style="font-size:12px;color:var(--text2)">${escHtml(d.tipo) || '—'}</span></td>
+    <td><span style="font-size:12px">${escHtml(d.responsable)}</span></td>
+    <td>${avc}</td>
+    <td>${progressBar(d.progress)}</td>
+    <td>${pendText}</td>
+    <td>${statusBadge(d.status)}</td>
+    <td class="col-hidden-sm">${csatBadge(d.csat)}</td>
+    <td>${fecha}</td>
+  </tr>`;
+}
+
+function renderEmpty() {
+  return `<tr><td colspan="9">
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>Sin resultados para los filtros aplicados.</p>
+    </div>
+  </td></tr>`;
+}
+
+function renderError(msg) {
+  document.getElementById('main-content').innerHTML = `
+    <div class="table-wrap">
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <p>No se pudo cargar el Google Sheet.<br><small style="color:var(--muted)">${escHtml(msg)}</small></p>
+        <br>
+        <button class="btn-primary" onclick="renderSetup()">Configurar Sheet ID</button>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────
+// SETUP PANEL (primera vez)
+// ─────────────────────────────────────────────
+function renderSetup() {
+  setSyncState('error', 'Sin configurar');
+  document.getElementById('main-content').innerHTML = `
+  <div class="setup-panel">
+    <h2>Conectar Google Sheets</h2>
+    <p>Este dashboard se sincroniza directamente con tu Google Sheets. Solo necesitas publicarlo y pegar el ID.</p>
+
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div class="step-text">En tu Google Sheets: <strong>Archivo → Compartir → Publicar en la web</strong>. Selecciona la hoja <code>Resumen contenidos personalizados</code> como CSV y haz clic en <strong>Publicar</strong>.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Copia el <strong>ID del documento</strong> de la URL. Es la parte entre <code>/d/</code> y <code>/edit</code>.<br>
+        Ejemplo: <code>1KcBnbizhpPkVNQ9Rd…p_8</code></div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">3</div>
+        <div class="step-text">Pega el ID abajo y haz clic en <strong>Conectar</strong>. Se guardará en tu navegador.</div>
+      </div>
+    </div>
+
+    <div class="url-input-wrap">
+      <input type="text" id="sheet-id-input" placeholder="Pega aquí la URL completa de publicación…">
+      <button class="btn-primary" onclick="saveSheetId()">Conectar</button>
+    </div>
+    <p class="note">Pega la URL completa que aparece en "Publicar en la web" (formato: <code>https://docs.google.com/spreadsheets/d/e/…/pub?…&output=csv</code>).</p>
+  </div>`;
+}
+
+function saveSheetId() {
+  const id = document.getElementById('sheet-id-input').value.trim();
+  if (!id) return;
+  // Guardar en localStorage para reusar
+  try { localStorage.setItem('crehana_sheet_id', id); } catch(e){}
+  CONFIG.sheetId = id;
+  loadData();
+}
+
+// ─────────────────────────────────────────────
+// EVENTOS
+// ─────────────────────────────────────────────
+function attachEvents() {
+  const search = document.getElementById('search-input');
+  const selStatus = document.getElementById('filter-status');
+  const selResp = document.getElementById('filter-resp');
+
+  if (search) search.addEventListener('input', e => {
+    searchTerm = e.target.value;
+    updateTable();
+  });
+  if (selStatus) selStatus.addEventListener('change', e => {
+    filterStatus = e.target.value;
+    updateTable();
+  });
+  if (selResp) selResp.addEventListener('change', e => {
+    filterResp = e.target.value;
+    updateTable();
+  });
+
+  // Sort headers
+  document.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.sort;
+      if (sortCol === col) sortDir *= -1;
+      else { sortCol = col; sortDir = 1; }
+      updateTable();
+    });
+  });
+}
+
+function updateTable() {
+  const data = getFiltered();
+  const tbody = document.getElementById('tbody');
+  if (tbody) {
+    tbody.innerHTML = data.length === 0 ? renderEmpty() : data.map(renderRow).join('');
+  }
+  // Update KPIs
+  const kpiWrap = document.querySelector('.kpi-grid');
+  if (kpiWrap) kpiWrap.outerHTML = renderKPIs(); // no recalc needed since allData unchanged
+
+  // Update count
+  const countEl = document.querySelector('.table-count');
+  if (countEl) countEl.textContent = `${data.length} resultado${data.length !== 1 ? 's' : ''}`;
+
+  // Update sort headers
+  document.querySelectorAll('th[data-sort]').forEach(th => {
+    const col = th.dataset.sort;
+    th.className = sortCol === col ? 'sorted' : '';
+    const label = th.textContent.replace(/[↑↓ ]+$/, '').trim();
+    const arrow = sortCol === col ? (sortDir === 1 ? ' ↑' : ' ↓') : '';
+    th.textContent = label + arrow;
+  });
+
+  // Re-attach sort events
+  document.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.sort;
+      if (sortCol === col) sortDir *= -1;
+      else { sortCol = col; sortDir = 1; }
+      updateTable();
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+(function init() {
+  // Intentar recuperar el Sheet ID guardado
+  try {
+    const saved = localStorage.getItem('crehana_sheet_id');
+    if (saved) CONFIG.sheetId = saved;
+  } catch(e){}
+
+  // También aceptar el ID hardcodeado por conveniencia
+  // (ya configurado en CONFIG.sheetId arriba)
+
+  loadData();
+
+  // Auto-refresh
+  if (CONFIG.refreshMs > 0) setInterval(loadData, CONFIG.refreshMs);
+})();
+</script>
+</body>
+</html>
